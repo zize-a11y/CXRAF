@@ -4,11 +4,11 @@ Browser extension (Manifest V3) untuk mendeteksi script berbahaya dan
 serangan Cross-Site Scripting (XSS) menggunakan analisis Content
 Security Policy (CSP).
 
-Dikembangkan sebagai bagian dari penelitian skripsi:
+Dikembangkan sebagai Bahan mengisi waktu luang:
 **"Pengembangan Browser Extension Pendeteksi Script Berbahaya dan
 Serangan Cross-Site Scripting (XSS) Menggunakan Analisis Content
 Security Policy (CSP)"**
-— Azisa Aurellia (NIM 231001040), Universitas Teknologi Sumbawa.
+— zizee.
 
 ## Fitur Utama
 
