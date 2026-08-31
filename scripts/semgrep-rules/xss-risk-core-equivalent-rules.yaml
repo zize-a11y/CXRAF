@@ -1,0 +1,85 @@
+rules:
+  - id: xss-risk-core-eval
+    languages: [javascript]
+    severity: ERROR
+    message: "[setara sink 'eval' di xss-risk-core] eval() dapat mengeksekusi string sebagai kode JavaScript"
+    patterns:
+      - pattern-either:
+          - pattern: eval(...)
+
+  - id: xss-risk-core-function-constructor
+    languages: [javascript]
+    severity: ERROR
+    message: "[setara sink 'function-constructor' di xss-risk-core] Function constructor setara eval() secara risiko"
+    patterns:
+      - pattern-either:
+          - pattern: new Function(...)
+
+  - id: xss-risk-core-document-write
+    languages: [javascript]
+    severity: WARNING
+    message: "[setara sink 'document-write' di xss-risk-core] document.write dapat menyuntikkan markup tanpa sanitasi"
+    patterns:
+      - pattern-either:
+          - pattern: document.write(...)
+          - pattern: document.writeln(...)
+
+  - id: xss-risk-core-inner-html
+    languages: [javascript]
+    severity: WARNING
+    message: "[setara sink 'inner-html' di xss-risk-core] innerHTML merender string sebagai HTML tanpa escaping otomatis"
+    patterns:
+      - pattern: $EL.innerHTML = $VAL
+
+  - id: xss-risk-core-outer-html
+    languages: [javascript]
+    severity: WARNING
+    message: "[setara sink 'outer-html' di xss-risk-core] outerHTML setara risiko dengan innerHTML"
+    patterns:
+      - pattern: $EL.outerHTML = $VAL
+
+  - id: xss-risk-core-insert-adjacent-html
+    languages: [javascript]
+    severity: WARNING
+    message: "[setara sink 'insert-adjacent-html' di xss-risk-core] Menyisipkan markup mentah ke DOM"
+    patterns:
+      - pattern: $EL.insertAdjacentHTML(...)
+
+  - id: xss-risk-core-settimeout-string
+    languages: [javascript]
+    severity: WARNING
+    message: "[setara sink 'settimeout-string' di xss-risk-core] setTimeout dengan argumen string berperilaku seperti eval()"
+    patterns:
+      - pattern-either:
+          - pattern: setTimeout("...", ...)
+          - pattern: setTimeout('...', ...)
+
+  - id: xss-risk-core-setinterval-string
+    languages: [javascript]
+    severity: WARNING
+    message: "[setara sink 'setinterval-string' di xss-risk-core] setInterval dengan argumen string berperilaku seperti eval()"
+    patterns:
+      - pattern-either:
+          - pattern: setInterval("...", ...)
+          - pattern: setInterval('...', ...)
+
+  - id: xss-risk-core-atob
+    languages: [javascript]
+    severity: INFO
+    message: "[setara sink 'atob' di xss-risk-core] Dekode base64, sering dipakai menyamarkan payload berbahaya"
+    patterns:
+      - pattern: atob(...)
+
+  - id: xss-risk-core-unescape
+    languages: [javascript]
+    severity: INFO
+    message: "[setara sink 'unescape' di xss-risk-core] Fungsi deprecated, sering dipakai bersama payload ter-encode"
+    patterns:
+      - pattern: unescape(...)
+
+  - id: xss-risk-core-srcdoc
+    languages: [javascript]
+    severity: WARNING
+    message: "[setara sink 'srcdoc' di xss-risk-core] srcdoc pada iframe merender HTML mentah"
+    patterns:
+      - pattern: $EL.srcdoc = $VAL

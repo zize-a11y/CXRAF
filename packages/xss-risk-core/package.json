@@ -1,0 +1,13 @@
+{
+  "name": "xss-risk-core",
+  "version": "1.0.0",
+  "description": "Client-side XSS risk assessment core engine — analisis konfigurasi CSP, deteksi pola sink berbahaya, korelasi source-sink, dan skoring risiko dengan confidence terpisah dari severity. Framework-agnostic: tidak bergantung Chrome API, DOM, atau environment browser apapun — bisa dipakai dari browser extension, CLI, atau aplikasi Node.js lain.",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./config/*.json": "./config/*.json"
+  },
+  "author": "Azisa Aurellia",
+  "license": "MIT"
+}

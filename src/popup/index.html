@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<!--
+  index.html (popup)
+
+  Markup ini sengaja minimal — hanya <div id="app"> sebagai root render.
+  Seluruh konten dinamis dibangun oleh UIRenderer.js via DOM API, bukan
+  ditulis statis di sini, karena isinya bergantung penuh pada hasil analisis
+  tab aktif.
+
+  data-theme="dark" di <html> adalah default sebelum preferensi tersimpan
+  dimuat oleh PopupController (mencegah "flash" tema salah saat popup baru dibuka).
+-->
+<html lang="id" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CSP-XSS Auditor</title>
+    <link rel="stylesheet" href="../styles/theme-dark.css" />
+    <link rel="stylesheet" href="../styles/theme-light.css" />
+    <link rel="stylesheet" href="../styles/popup.css" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="index.js"></script>
+  </body>
+</html>

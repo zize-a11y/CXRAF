@@ -1,0 +1,30 @@
+/**
+ * theme-dark.css
+ *
+ * Variabel warna untuk dark mode (default extension ini). Dipisah dari
+ * theme-light.css dan popup.css agar penggantian tema (FR-11) hanya
+ * soal menukar atribut [data-theme] di <html>, tanpa duplikasi layout.
+ */
+
+:root[data-theme='dark'] {
+  --color-bg: #0d1117;
+  --color-surface: #161b22;
+  --color-surface-alt: #1c2330;
+  --color-border: #2a313c;
+  --color-text: #e6edf3;
+  --color-text-secondary: #8b949e;
+  --color-accent: #45d9c7;
+  --color-accent-soft: rgba(69, 217, 199, 0.14);
+
+  --risk-critical: #ff4d6a;
+  --risk-high: #ff9f45;
+  --risk-medium: #f0c93e;
+  --risk-low: #37d6a6;
+
+  --risk-critical-soft: rgba(255, 77, 106, 0.14);
+  --risk-high-soft: rgba(255, 159, 69, 0.14);
+  --risk-medium-soft: rgba(240, 201, 62, 0.14);
+  --risk-low-soft: rgba(55, 214, 166, 0.14);
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4);
+}

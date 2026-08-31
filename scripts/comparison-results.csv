@@ -1,0 +1,14 @@
+Domain,SkorCSP_Kami,Warning_Kami,Findings_Google,HighSeverity_Google,Grade_Observatory,Skor_Observatory
+github.com,72,7,1,0,A+,115
+www.npmjs.com,26,8,9,2,B+,80
+stripe.com,82,3,3,0,A+,105
+www.cloudflare.com,59,7,25,4,B,75
+addons.mozilla.org,77,2,3,0,A+,110
+uts.ac.id,0,1,0,0,,
+pgds.kemkes.go.id,0,1,0,0,F,10
+www.ui.ac.id,0,1,0,0,,
+www.itb.ac.id,10,5,2,2,B,70
+www.bi.go.id,5,16,2,2,,
+www.tokopedia.com,36,2,87,0,D,35
+www.bri.co.id,0,1,0,0,C,50
+www.bca.co.id,16,18,29,11,B,75

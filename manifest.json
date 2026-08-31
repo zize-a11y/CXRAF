@@ -1,0 +1,64 @@
+{
+  "manifest_version": 3,
+  "name": "CSP-XSS Auditor",
+  "version": "1.0.0",
+  "description": "Menganalisis konfigurasi Content Security Policy dan mendeteksi indikasi script berbahaya (XSS) pada halaman web aktif.",
+  "author": "Azisa Aurellia",
+
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting",
+    "webRequest"
+  ],
+
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+
+  "background": {
+    "service_worker": "src/background/index.js",
+    "type": "module"
+  },
+
+  "action": {
+    "default_popup": "src/popup/index.html",
+    "default_icon": {
+      "16": "assets/icons/icon16.png",
+      "32": "assets/icons/icon32.png",
+      "48": "assets/icons/icon48.png",
+      "128": "assets/icons/icon128.png"
+    },
+    "default_title": "CSP-XSS Auditor"
+  },
+
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "32": "assets/icons/icon32.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["src/content/index.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+
+  "web_accessible_resources": [
+    {
+      "resources": ["packages/xss-risk-core/config/sink-patterns.json"],
+      "matches": ["http://*/*", "https://*/*"]
+    }
+  ],
+
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self'; base-uri 'self';"
+  },
+
+  "minimum_chrome_version": "102"
+}

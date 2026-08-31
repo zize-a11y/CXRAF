@@ -1,0 +1,34 @@
+{
+  "_comment": "Setiap sink punya regex pattern (dievaluasi sebagai string oleh SinkPatternCompiler di kode, bukan RegExp literal di JSON), baseSeverity (dampak JIKA benar-benar eksploitable), dan baseConfidence (seberapa yakin pattern match ini BUKAN false-positive, tanpa mempertimbangkan korelasi source-sink). Severity dan confidence SENGAJA dipisah sebagai dua sumbu berbeda — mengikuti OWASP Risk Rating Methodology yang memisahkan Impact dari Likelihood — karena sink dengan dampak tinggi (mis. eval) belum tentu selalu jadi indikasi kuat (bisa false-positive), begitu pula sebaliknya.",
+  "sinks": [
+    { "id": "eval", "pattern": "\\beval\\s*\\(", "baseSeverity": "CRITICAL", "baseConfidence": 0.6, "description": "eval() dapat mengeksekusi string sebagai kode JavaScript" },
+    { "id": "function-constructor", "pattern": "new\\s+Function\\s*\\(", "baseSeverity": "CRITICAL", "baseConfidence": 0.6, "description": "Function constructor setara eval() secara risiko" },
+    { "id": "document-write", "pattern": "document\\.write(ln)?\\s*\\(", "baseSeverity": "HIGH", "baseConfidence": 0.55, "description": "document.write dapat menyuntikkan markup tanpa sanitasi" },
+    { "id": "inner-html", "pattern": "\\.innerHTML\\s*=", "baseSeverity": "HIGH", "baseConfidence": 0.55, "description": "innerHTML merender string sebagai HTML tanpa escaping otomatis" },
+    { "id": "outer-html", "pattern": "\\.outerHTML\\s*=", "baseSeverity": "HIGH", "baseConfidence": 0.55, "description": "outerHTML setara risiko dengan innerHTML" },
+    { "id": "insert-adjacent-html", "pattern": "\\.insertAdjacentHTML\\s*\\(", "baseSeverity": "HIGH", "baseConfidence": 0.55, "description": "Menyisipkan markup mentah ke DOM" },
+    { "id": "settimeout-string", "pattern": "setTimeout\\s*\\(\\s*['\"`]", "baseSeverity": "MEDIUM", "baseConfidence": 0.5, "description": "setTimeout dengan argumen string berperilaku seperti eval()" },
+    { "id": "setinterval-string", "pattern": "setInterval\\s*\\(\\s*['\"`]", "baseSeverity": "MEDIUM", "baseConfidence": 0.5, "description": "setInterval dengan argumen string berperilaku seperti eval()" },
+    { "id": "atob", "pattern": "\\batob\\s*\\(", "baseSeverity": "LOW", "baseConfidence": 0.3, "description": "Dekode base64, sering dipakai menyamarkan payload berbahaya", "_confidenceNote": "Rendah karena atob() sangat umum dipakai untuk keperluan legitimate (decode konfigurasi, font, gambar base64) - false-positive tinggi jika hanya dari pattern match" },
+    { "id": "unescape", "pattern": "\\bunescape\\s*\\(", "baseSeverity": "LOW", "baseConfidence": 0.3, "description": "Fungsi deprecated, sering dipakai bersama payload ter-encode", "_confidenceNote": "Sama seperti atob - deprecated tapi masih dipakai untuk keperluan non-berbahaya" },
+    { "id": "javascript-uri", "pattern": "javascript:\\s*", "baseSeverity": "HIGH", "baseConfidence": 0.5, "description": "URI scheme javascript: dapat mengeksekusi kode dari atribut href/src" },
+    { "id": "srcdoc", "pattern": "\\.srcdoc\\s*=", "baseSeverity": "MEDIUM", "baseConfidence": 0.45, "description": "srcdoc pada iframe merender HTML mentah" }
+  ],
+  "eventHandlerAttributes": [
+    "onclick", "onerror", "onload", "onmouseover", "onfocus", "oninput", "onchange", "onsubmit"
+  ],
+  "eventHandlerBaseSeverity": "MEDIUM",
+  "eventHandlerBaseConfidence": 0.4,
+  "_comment_traceConfidence": "Confidence untuk hasil korelasi SourceSinkTracer. DIRECT (source & sink di satu statement yang sama) lebih meyakinkan daripada INDIRECT (melalui 1 hop assignment variabel, lebih rentan salah karena tidak menelusuri sanitasi di antaranya).",
+  "traceConfidence": {
+    "direct": 0.9,
+    "indirect": 0.65
+  },
+  "sourcePatterns": [
+    { "id": "location-search", "pattern": "location\\.search", "description": "Query string URL, dapat dikontrol penyerang via link" },
+    { "id": "location-hash", "pattern": "location\\.hash", "description": "Fragment URL, umum dipakai pada DOM-based XSS" },
+    { "id": "document-referrer", "pattern": "document\\.referrer", "description": "Referrer dapat dimanipulasi" },
+    { "id": "window-name", "pattern": "window\\.name", "description": "window.name dapat diisi oleh halaman lain sebelum navigasi" },
+    { "id": "postmessage-data", "pattern": "\\.data\\b", "description": "Data dari event message, perlu validasi origin" }
+  ]
+}

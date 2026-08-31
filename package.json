@@ -1,0 +1,30 @@
+{
+  "name": "csp-xss-auditor",
+  "version": "1.0.0",
+  "description": "Browser extension implementasi dari xss-risk-core (packages/xss-risk-core) — engine analisis CSP dan deteksi script berbahaya yang framework-agnostic.",
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
+    "test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --watch",
+    "test:coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage",
+    "lint:architecture": "node scripts/check-architecture.mjs",
+    "scan": "node scripts/bulk-test.mjs",
+    "sensitivity": "node scripts/sensitivity-analysis.mjs",
+    "compare": "node scripts/compare-baseline.mjs",
+    "compare:semgrep": "node scripts/compare-semgrep.mjs"
+},
+  
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "jest": "^29.7.0",
+    "jsdom": "^25.0.1"
+  },
+  "author": "Azisa Aurellia",
+  "license": "MIT",
+  "dependencies": {
+    "csp_evaluator": "^1.1.8"
+  }
+}

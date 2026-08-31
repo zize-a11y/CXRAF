@@ -1,0 +1,31 @@
+{
+  "entries": [
+    {
+      "name": "eval-langsung",
+      "entry": { "type": "inline-script", "code": "eval(userInput);" },
+      "expectedSinkIds": ["eval"]
+    },
+    {
+      "name": "indirect-taint-hash-ke-eval",
+      "entry": { "type": "inline-script", "code": "var payload = location.hash; eval(payload);" },
+      "expectedSinkIds": ["eval"],
+      "expectedTraceSourceId": "location-hash"
+    },
+    {
+      "name": "innerHTML-dari-referrer",
+      "entry": { "type": "inline-script", "code": "el.innerHTML = document.referrer;" },
+      "expectedSinkIds": ["inner-html"],
+      "expectedTraceSourceId": "document-referrer"
+    },
+    {
+      "name": "event-handler-onclick",
+      "entry": { "type": "event-handler", "attribute": "onclick", "code": "doSomething()" },
+      "expectedSinkIds": ["event-handler:onclick"]
+    },
+    {
+      "name": "script-bersih",
+      "entry": { "type": "inline-script", "code": "const total = price * qty; render(total);" },
+      "expectedSinkIds": []
+    }
+  ]
+}

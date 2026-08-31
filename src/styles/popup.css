@@ -1,0 +1,339 @@
+/**
+ * popup.css
+ *
+ * Layout & styling komponen popup. SELURUH warna memakai var(--...) dari
+ * theme-dark.css / theme-light.css — tidak ada warna hardcode di sini,
+ * agar toggle tema (FR-11) konsisten di seluruh komponen.
+ */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 380px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: ui-sans-serif, 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.font-mono {
+  font-family: ui-monospace, 'SF Mono', 'Cascadia Code', 'JetBrains Mono', Consolas, monospace;
+}
+
+/* ---------- Header ---------- */
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.app-header__domain {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.app-header__domain-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-header__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--color-accent);
+}
+
+.theme-toggle {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  border-radius: 8px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  color: var(--color-text);
+  border-color: var(--color-accent);
+}
+
+.theme-toggle:focus-visible,
+.chip:focus-visible,
+.finding-card__header:focus-visible,
+.footer-btn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Score gauge (signature element) ---------- */
+
+.score-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 20px 16px 16px;
+}
+
+.score-gauge {
+  position: relative;
+  width: 128px;
+  height: 128px;
+}
+
+.score-gauge__track {
+  fill: none;
+  stroke: var(--color-border);
+  stroke-width: 10;
+}
+
+.score-gauge__arc {
+  fill: none;
+  stroke-width: 10;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dashoffset 0.5s ease;
+}
+
+.score-gauge__label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-gauge__number {
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.score-gauge__suffix {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+.risk-pill {
+  padding: 3px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ---------- Chip row ---------- */
+
+.chip-row {
+  display: flex;
+  gap: 8px;
+  padding: 0 16px 16px;
+}
+
+.chip {
+  flex: 1;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 8px 10px;
+  text-align: center;
+}
+
+.chip__value {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.chip__label {
+  font-size: 10px;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* ---------- Sections ---------- */
+
+.section {
+  padding: 0 16px 16px;
+}
+
+.section__title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-secondary);
+  margin: 0 0 8px;
+}
+
+.section__list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.empty-state {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+}
+
+/* ---------- Finding card ---------- */
+
+.finding-card {
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.finding-card__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  color: var(--color-text);
+  font: inherit;
+}
+
+.finding-card__severity-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.finding-card__title {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.finding-card__severity-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.finding-card__body {
+  padding: 0 10px 10px 28px;
+  font-size: 11.5px;
+  color: var(--color-text-secondary);
+  display: none;
+}
+
+.finding-card__confidence {
+  margin-top: 6px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+.finding-card--expanded .finding-card__body {
+  display: block;
+}
+
+/* ---------- Recommendations ---------- */
+
+.recommendation-item {
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+  padding: 8px 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.recommendation-item:first-child {
+  border-top: none;
+}
+
+.recommendation-item__priority {
+  flex-shrink: 0;
+  width: 6px;
+  border-radius: 3px;
+}
+
+/* ---------- Footer ---------- */
+
+.app-footer {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--color-border);
+}
+
+.footer-btn {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.footer-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.footer-btn--primary {
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* ---------- Loading state ---------- */
+
+.loading-state {
+  padding: 40px 16px;
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .score-gauge__arc {
+    transition: none;
+  }
+}

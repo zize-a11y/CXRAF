@@ -1,0 +1,39 @@
+{
+  "_comment": "Konfigurasi directive CSP: bobot kontribusi ke skor dan status wajib. Nilai weight adalah kontribusi maksimum directive ini terhadap skor total 100.",
+  "requiredDirectives": [
+    "default-src",
+    "script-src",
+    "object-src",
+    "base-uri",
+    "frame-ancestors"
+  ],
+  "directives": {
+    "default-src":            { "weight": 12, "required": true },
+    "script-src":              { "weight": 20, "required": true },
+    "object-src":              { "weight": 10, "required": true },
+    "base-uri":                { "weight": 8,  "required": true },
+    "frame-ancestors":         { "weight": 10, "required": true },
+    "style-src":               { "weight": 8,  "required": false },
+    "img-src":                 { "weight": 4,  "required": false },
+    "connect-src":             { "weight": 6,  "required": false },
+    "worker-src":              { "weight": 4,  "required": false },
+    "media-src":               { "weight": 3,  "required": false },
+    "font-src":                { "weight": 2,  "required": false },
+    "manifest-src":            { "weight": 2,  "required": false },
+    "prefetch-src":            { "weight": 1,  "required": false },
+    "upgrade-insecure-requests": { "weight": 5, "required": false },
+    "block-all-mixed-content": { "weight": 5,  "required": false }
+  },
+  "_comment_penalty": "Penalti dikurangkan dari kontribusi directive terkait jika keyword berisiko ditemukan pada value directive tersebut.",
+  "riskyKeywordPenalties": {
+    "unsafe-inline":  { "penaltyRatio": 0.9, "severity": "HIGH" },
+    "unsafe-eval":    { "penaltyRatio": 0.9, "severity": "HIGH" },
+    "*":              { "penaltyRatio": 1.0, "severity": "CRITICAL" },
+    "data:":          { "penaltyRatio": 0.5, "severity": "MEDIUM" },
+    "blob:":          { "penaltyRatio": 0.4, "severity": "MEDIUM" },
+    "http:":          { "penaltyRatio": 0.6, "severity": "HIGH" },
+    "wildcardSubdomain": { "penaltyRatio": 0.5, "severity": "MEDIUM", "_note": "pola seperti *.example.com" }
+  },
+  "missingDirectivePenaltyRatio": 1.0,
+  "cspNotFoundScore": 0
+}

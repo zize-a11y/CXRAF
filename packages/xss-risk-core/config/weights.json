@@ -1,0 +1,54 @@
+{
+  "_comment": "Model skoring risiko berbasis Likelihood x Impact, mengikuti OWASP Risk Rating Methodology (https://owasp.org/www-community/OWASP_Risk_Rating_Methodology). Likelihood mengukur SEBERAPA MUNGKIN eksploitasi berhasil (diturunkan dari kelemahan CSP + confidence temuan). Impact mengukur SEBERAPA PARAH DAMPAKNYA jika berhasil dieksploitasi (diturunkan dari severity terburuk temuan script). RiskLevel akhir ditentukan dari MATRIX Likelihood x Impact (riskMatrix di bawah), BUKAN dari threshold satu angka gabungan — ini yang membedakan model ini dari versi sebelumnya, dan yang membuatnya defensible secara akademis (severity/impact dan likelihood adalah dua sumbu berbeda yang tidak seharusnya dicampur jadi satu angka sebelum diklasifikasikan).",
+
+  "likelihoodWeights": {
+    "cspWeaknessRatio": 0.6,
+    "confidenceRatio": 0.4,
+    "_comment": "Likelihood = (100 - skorCSP) * cspWeaknessRatio + (rata-rata confidence temuan * 100) * confidenceRatio. CSP lemah -> exploitasi lebih mungkin berhasil (Ease of Exploit, istilah OWASP). Confidence tinggi -> lebih yakin temuan itu benar-benar dapat dieksploitasi, bukan false-positive."
+  },
+
+  "impactSeverityScale": {
+    "CRITICAL": 100,
+    "HIGH": 70,
+    "MEDIUM": 40,
+    "LOW": 15,
+    "_comment": "Impact = nilai TERTINGGI (worst-case) di antara seluruh temuan script yang ditemukan. Tidak ada temuan -> Impact 0."
+  },
+
+  "likelihoodThresholds": {
+    "LOW": { "maxScore": 33 },
+    "MEDIUM": { "maxScore": 66 },
+    "HIGH": { "maxScore": 100 }
+  },
+
+  "impactThresholds": {
+    "LOW": { "maxScore": 25 },
+    "MEDIUM": { "maxScore": 50 },
+    "HIGH": { "maxScore": 75 },
+    "CRITICAL": { "maxScore": 100 }
+  },
+
+  "_comment_matrix": "Matrix Likelihood x Impact -> RiskLevel akhir, standar OWASP Risk Rating Methodology (5x5 disederhanakan jadi 3x4 untuk skala penelitian S1). Baris = kategori Likelihood, kolom = kategori Impact.",
+  "riskMatrix": {
+    "LOW": {
+      "LOW": "LOW",
+      "MEDIUM": "LOW",
+      "HIGH": "MEDIUM",
+      "CRITICAL": "HIGH"
+    },
+    "MEDIUM": {
+      "LOW": "LOW",
+      "MEDIUM": "MEDIUM",
+      "HIGH": "HIGH",
+      "CRITICAL": "CRITICAL"
+    },
+    "HIGH": {
+      "LOW": "MEDIUM",
+      "MEDIUM": "HIGH",
+      "HIGH": "CRITICAL",
+      "CRITICAL": "CRITICAL"
+    }
+  },
+
+  "_comment_deprecated": "Field 'scriptSafetyPenaltyPerFinding' dan 'criticalConfidenceThreshold' dari model skoring versi SEBELUMNYA (single blended score + manual critical-override) DIHAPUS dari file ini, bukan dibiarkan jadi dead config seperti masalah yang pernah diperbaiki di Temuan #1 review arsitektur. Peran 'critical override' yang dulu ditangani manual sekarang tergantikan secara natural oleh riskMatrix: Impact=CRITICAL dengan Likelihood>=MEDIUM otomatis menghasilkan RiskLevel CRITICAL/HIGH tanpa perlu logic override terpisah."
+}

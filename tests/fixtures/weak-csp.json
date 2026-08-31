@@ -1,0 +1,7 @@
+{
+  "description": "CSP dengan wildcard dan keyword unsafe pada directive utama.",
+  "header": "default-src *; script-src 'unsafe-inline' 'unsafe-eval' *; object-src *",
+  "expectedScoreMax": 10,
+  "expectedCspFound": true,
+  "expectedWarningKeywords": ["*", "unsafe-inline", "unsafe-eval"]
+}

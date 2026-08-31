@@ -1,0 +1,99 @@
+# Daftar URL untuk bulk testing (scripts/bulk-test.mjs)
+# Satu URL per baris. Baris diawali # diabaikan (komentar).
+#
+# Dibersihkan dari hasil "npm run scan" sebelumnya: 24 URL yang GAGAL
+# fetch (timeout/SSL/server down) dan 1 duplikat (dikes.sumbawakab.go.id)
+# sudah dihapus dari daftar aktif. URL yang error TETAP disimpan di
+# bagian bawah file ini (dikomentari) untuk dicoba lagi nanti, bukan
+# dihapus permanen.
+
+
+
+# --- Target Spesifik: Pemerintah & Kedinasan Kab. Sumbawa (.go.id) ---
+https://diskominfo.sumbawakab.go.id
+https://diskominfotik.sumbawakab.go.id/
+https://bappeda.sumbawakab.go.id
+https://bkad.sumbawakab.go.id/
+https://bkpsdm.sumbawakab.go.id/
+https://bpbd.sumbawakab.go.id/
+https://dukcapil.sumbawakab.go.id/
+https://dp2kbp3a.sumbawakab.go.id/
+https://dikes.sumbawakab.go.id
+https://disketapang.sumbawakab.go.id/
+https://dinaslh.sumbawakab.go.id/
+https://dishub.sumbawakab.go.id/
+https://distani.sumbawakab.go.id/
+https://disnakkeswan.sumbawakab.go.id/
+https://dislutkan.sumbawakab.go.id/
+https://dkukmindag.sumbawakab.go.id/
+https://dpmd.sumbawakab.go.id/
+https://pmptsp.sumbawakab.go.id/
+https://inspektorat.sumbawakab.go.id/
+https://kesbangpol.sumbawakab.go.id/
+https://disnakertrans.sumbawakab.go.id/
+https://disporapar.sumbawakab.go.id/
+https://damkar.sumbawakab.go.id/
+https://prkp.sumbawakab.go.id/
+https://rsud.sumbawakab.go.id/
+https://satpolpp.sumbawakab.go.id/
+https://setda.sumbawakab.go.id/
+https://setwan.sumbawakab.go.id/
+https://upt-lablh.sumbawakab.go.id/
+https://ppid.sumbawakab.go.id
+https://kec-sumbawa.sumbawakab.go.id
+https://bpkad.sumbawakab.go.id
+https://pesta-kawa.sumbawakab.go.id/
+https://dprd.sumbawakab.go.id
+https://disos.sumbawakab.go.id/
+https://esamsatkotasumbawa.org/
+https://www.pajak.go.id/id/kpp-pratama-sumbawa-besar
+https://web.disdikbud.sumbawakab.go.id/
+https://kab-sumbawa.kpu.go.id/
+https://dispussip.sumbawakab.go.id/
+https://pupr.sumbawakab.go.id/
+https://bapenda.sumbawakab.go.id/
+
+# --- Target Spesifik: Perguruan Tinggi Kab. Sumbawa (.ac.id) ---
+https://uts.ac.id
+https://portal.uts.ac.id/
+https://mbkm.uts.ac.id/auth
+https://samawa-university.ac.id/
+https://staissumbawa.sevimaplatform.com/gate/login
+https://staissumbawa.sevimaplatform.com/spmbfront/
+
+
+# ============================================================
+# 3. DESA - TERVERIFIKASI
+# ============================================================
+
+https://desa-pulaubungin.sumbawakab.go.id/
+https://desa-sebewe.sumbawakab.go.id
+https://desa-brangkolong.sumbawakab.go.id
+https://desa-poto.sumbawakab.go.id
+https://desa-perung.sumbawakab.go.id
+https://desa-pelat.sumbawakab.go.id
+https://desa-semamung.sumbawakab.go.id
+https://desa-lito.sumbawakab.go.id
+https://desa-moyomekar.sumbawakab.go.id
+https://desa-batutering.sumbawakab.go.id
+https://desa-barutahan.sumbawakab.go.id
+
+# --- Target Spesifik: Sekolah di Kab. Sumbawa (.sch.id) ---
+https://smanika-sumbawabesar.sch.id
+https://sman2sumbawabesar.sch.id
+https://sman3sumbawa.sch.id
+https://sman4sumbawabesar.sch.id
+https://smkn2sumbawabesar.sch.id
+
+# --- Target Spesifik: Desa di Kab. Sumbawa (.desa.id) ---
+https://jorok-utan.desa.id
+https://desa-semamung.sumbawakab.go.id/
+
+# --- Target Spesifik: Media, Komersial & Komunitas Sumbawa (.com, .id, .co.id) ---
+https://kesultanansumbawa.id
+https://kabarsumbawa.com
+https://mediasumbawa.com
+https://sumbawanews.com
+https://samawarea.com
+https://suarasumbawa.com
+
