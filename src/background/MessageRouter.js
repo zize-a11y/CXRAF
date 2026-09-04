@@ -12,16 +12,17 @@
  * use case mana yang dipanggil berdasarkan message.type.
  */
 
-import { MessageType } from './messageTypes.js';
+import { MessageType } from "./messageTypes.js";
 
 export class MessageRouter {
   /**
    * @param {import('./AnalysisOrchestrator.js').AnalysisOrchestrator} orchestrator
    * @param {import('../services/StorageService.js').StorageService} storageService
    */
-  constructor(orchestrator, storageService) {
+  constructor(orchestrator, storageService, updateToolbarBadge) {
     this.orchestrator = orchestrator;
     this.storageService = storageService;
+    this.updateToolbarBadge = updateToolbarBadge;
   }
 
   /**
@@ -38,7 +39,7 @@ export class MessageRouter {
   handleMessage(message, sender, sendResponse) {
     switch (message.type) {
       case MessageType.REQUEST_ANALYSIS:
-        this._handleRequestAnalysis(message, sendResponse);
+        this._handleRequestAnalysis(message, sender, sendResponse);
         return true;
 
       case MessageType.REQUEST_HISTORY:
@@ -46,8 +47,6 @@ export class MessageRouter {
         return true;
 
       default:
-        // Pesan dengan tipe tidak dikenal diabaikan secara sengaja (bukan error),
-        // karena bisa saja berasal dari context lain yang tidak relevan.
         return false;
     }
   }
@@ -57,15 +56,26 @@ export class MessageRouter {
    * @param {(response: object) => void} sendResponse
    * @returns {Promise<void>}
    */
-  async _handleRequestAnalysis(message, sendResponse) {
+  async _handleRequestAnalysis(message, sender, sendResponse) {
     try {
-      const report = await this.orchestrator.runAnalysis(message.tabId, message.domain);
-      sendResponse({ type: MessageType.ANALYSIS_RESULT, payload: report });
+      const report = await this.orchestrator.runAnalysis(
+        message.tabId,
+        message.domain,
+      );
+
+      this.updateToolbarBadge(message.tabId, report);
+
+      sendResponse({
+        type: MessageType.ANALYSIS_RESULT,
+        payload: report,
+      });
     } catch (error) {
-      sendResponse({ type: MessageType.ANALYSIS_ERROR, payload: { message: error.message } });
+      sendResponse({
+        type: MessageType.ANALYSIS_ERROR,
+        payload: { message: error.message },
+      });
     }
   }
-
   /**
    * @param {{domain: string}} message
    * @param {(response: object) => void} sendResponse
@@ -76,7 +86,10 @@ export class MessageRouter {
       const history = await this.storageService.getHistory(message.domain);
       sendResponse({ type: MessageType.HISTORY_RESULT, payload: history });
     } catch (error) {
-      sendResponse({ type: MessageType.ANALYSIS_ERROR, payload: { message: error.message } });
+      sendResponse({
+        type: MessageType.ANALYSIS_ERROR,
+        payload: { message: error.message },
+      });
     }
   }
 }

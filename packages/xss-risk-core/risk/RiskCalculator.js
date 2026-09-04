@@ -194,7 +194,7 @@ export class RiskCalculator {
       "data:": `Batasi skema data: pada ${directive} hanya jika benar-benar diperlukan (mis. untuk favicon), hindari untuk script-src.`,
       "blob:": `Tinjau kebutuhan skema blob: pada ${directive}, batasi hanya untuk konteks yang memerlukan (mis. Web Worker tepercaya).`,
       "http:": `Ganti skema http: dengan https: pada ${directive} untuk mencegah downgrade attack.`,
-      "-": `Tambahkan directive "${directive}" pada header CSP untuk menutup celah default yang terlalu longgar.`,
+      "-": "Tambahkan header Content-Security-Policy pada response halaman dan konfigurasi directive CSP yang sesuai untuk membatasi sumber script.",
     };
     return (
       map[keyword] ||

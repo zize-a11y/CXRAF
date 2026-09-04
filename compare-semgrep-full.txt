@@ -1,23 +1,23 @@
 ﻿/**
  * compare-semgrep.mjs
  *
- * Fungsi: Melengkapi Temuan #8 dari review arsitektur ΓÇö sebelumnya
+ * Fungsi: Melengkapi Temuan #8 dari review arsitektur â€” sebelumnya
  * perbandingan (compare-baseline.mjs) hanya mencakup csp_evaluator
  * (Google) dan MDN HTTP Observatory, yang KEDUANYA hanya mengevaluasi
  * HEADER/konfigurasi HTTP, TIDAK ADA yang menganalisis isi script.
  * Script ini menutup celah itu dengan membandingkan `ScriptAnalyzer`
- * (xss-risk-core) terhadap Semgrep ΓÇö static analysis tool sungguhan yang
+ * (xss-risk-core) terhadap Semgrep â€” static analysis tool sungguhan yang
  * BENAR-BENAR menganalisis kode, bukan cuma header.
  *
  * KENAPA RULE CUSTOM, BUKAN RULE PACK REGISTRY (p/javascript, dsb):
  * Rule pack resmi Semgrep (p/javascript, p/security-audit) di-download
- * dari semgrep.dev saat runtime ΓÇö tidak reproducible (isinya bisa berubah
+ * dari semgrep.dev saat runtime â€” tidak reproducible (isinya bisa berubah
  * kapan saja tanpa version pinning yang jelas dari sisi pengguna), dan
  * mencampur banyak rule yang tidak relevan dengan kategori sink yang
  * dipakai xss-risk-core. Sebagai gantinya, digunakan rule CUSTOM
  * (scripts/semgrep-rules/xss-risk-core-equivalent-rules.yaml) yang
  * ditulis SPESIFIK mencerminkan ke-12 kategori sink yang sama persis
- * dengan sink-patterns.json ΓÇö memastikan perbandingan apple-to-apple
+ * dengan sink-patterns.json â€” memastikan perbandingan apple-to-apple
  * (kategori sink identik, mesin deteksi berbeda: regex+tokenizer buatan
  * sendiri vs AST-based pattern matching Semgrep).
  *
@@ -81,7 +81,7 @@ function assertSemgrepInstalled() {
   try {
     execFileSync("semgrep", ["--version"], { stdio: "pipe" });
   } catch {
-    console.error("Γ¥î Semgrep CLI tidak ditemukan.");
+    console.error("âŒ Semgrep CLI tidak ditemukan.");
     console.error("   Install dulu: pip install semgrep");
     console.error(
       "   Lihat: https://semgrep.dev/docs/getting-started/quickstart",
@@ -142,33 +142,13 @@ function runSemgrepOnEntries(scriptEntries) {
     }
 
     const raw = JSON.parse(readFileSync(outputPath, "utf-8"));
-
     const findingsByRule = {};
-    const findingsDetail = [];
-
-    for (const result of raw.results ?? []) {
-      const ruleId = result.check_id ?? "UNKNOWN_RULE";
-
-      findingsByRule[ruleId] = (findingsByRule[ruleId] ?? 0) + 1;
-
-      findingsDetail.push({
-        ruleId,
-        message: result.extra?.message ?? "",
-        severity: result.extra?.severity ?? "",
-        path: result.path ?? "",
-        startLine: result.start?.line ?? "",
-        startCol: result.start?.col ?? "",
-        endLine: result.end?.line ?? "",
-        endCol: result.end?.col ?? "",
-      });
+    for (const result of raw.results) {
+      findingsByRule[result.check_id] =
+        (findingsByRule[result.check_id] ?? 0) + 1;
     }
 
-    return {
-      ok: true,
-      findingsCount: raw.results?.length ?? 0,
-      findingsByRule,
-      findingsDetail,
-    };
+    return { ok: true, findingsCount: raw.results.length, findingsByRule };
   } catch (error) {
     return { ok: false, error: error.message };
   } finally {
@@ -237,18 +217,7 @@ async function main() {
       ourCount: ourResult.findings.length,
       semgrepCount: semgrepResult.findingsCount,
       semgrepByRule: semgrepResult.findingsByRule,
-      semgrepFindings: semgrepResult.findingsDetail,
     });
-
-    if (semgrepResult.findingsCount > 0) {
-      console.log("    Semgrep breakdown:");
-
-      for (const [ruleId, count] of Object.entries(
-        semgrepResult.findingsByRule,
-      )) {
-        console.log(`      ${ruleId}: ${count}`);
-      }
-    }
   }
 
   console.log("\n=== RINGKASAN PERBANDINGAN ===");
@@ -298,63 +267,14 @@ async function main() {
   );
 
   const csvHeader = "Domain,Findings_xss-risk-core,Findings_Semgrep,Selisih\n";
-
   const csvRows = okResults.map(
     (r) =>
       `${r.domain},${r.ourCount},${r.semgrepCount},${r.ourCount - r.semgrepCount}`,
   );
-
   const csvPath = new URL("./semgrep-comparison-results.csv", import.meta.url);
-
   writeFileSync(csvPath, csvHeader + csvRows.join("\n") + "\n");
-
   console.log(`\nHasil tersimpan ke scripts/semgrep-comparison-results.csv`);
-
-  // ============================================================
-  // CSV DIAGNOSTIK: DETAIL RULE SEMGREP
-  // ============================================================
-
-  const breakdownHeader =
-    "Domain,Rule_ID,Message,Severity,File,Start_Line,Start_Col,End_Line,End_Col\n";
-
-  const breakdownRows = [];
-
-  for (const result of okResults) {
-    for (const finding of result.semgrepFindings ?? []) {
-      const escapeCsv = (value) =>
-        `"${String(value ?? "").replace(/"/g, '""')}"`;
-
-      breakdownRows.push(
-        [
-          result.domain,
-          finding.ruleId,
-          finding.message,
-          finding.severity,
-          finding.path,
-          finding.startLine,
-          finding.startCol,
-          finding.endLine,
-          finding.endCol,
-        ]
-          .map(escapeCsv)
-          .join(","),
-      );
-    }
-  }
-
-  const breakdownPath = new URL(
-    "./semgrep-rule-breakdown.csv",
-    import.meta.url,
-  );
-
-  writeFileSync(
-    breakdownPath,
-    breakdownHeader + breakdownRows.join("\n") + "\n",
-  );
-
-  console.log(
-    "Detail rule Semgrep tersimpan ke scripts/semgrep-rule-breakdown.csv",
-  );
 }
 
 main();
+

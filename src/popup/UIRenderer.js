@@ -12,9 +12,10 @@
  * pendeteksi XSS sendiri rentan terhadap pola yang sama.
  */
 
-import { createScoreBadge } from './components/ScoreBadge.js';
-import { createFindingCard } from './components/FindingCard.js';
-import { createThemeToggle } from './components/ThemeToggle.js';
+import { createScoreBadge } from "./components/ScoreBadge.js";
+import { createFindingCard } from "./components/FindingCard.js";
+import { createThemeToggle } from "./components/ThemeToggle.js";
+import { createRiskFactors } from "./components/RiskFactors.js";
 
 export class UIRenderer {
   /** @param {HTMLElement} rootEl - elemen container utama, mis. document.getElementById('app') */
@@ -33,9 +34,9 @@ export class UIRenderer {
    */
   renderLoading() {
     this._clear();
-    const el = document.createElement('div');
-    el.className = 'loading-state';
-    el.textContent = 'Menganalisis halaman…';
+    const el = document.createElement("div");
+    el.className = "loading-state";
+    el.textContent = "Menganalisis halaman…";
     this.root.appendChild(el);
   }
 
@@ -47,8 +48,8 @@ export class UIRenderer {
    */
   renderError(message) {
     this._clear();
-    const el = document.createElement('div');
-    el.className = 'loading-state';
+    const el = document.createElement("div");
+    el.className = "loading-state";
     el.textContent = `Analisis tidak dapat dijalankan: ${message}`;
     this.root.appendChild(el);
   }
@@ -61,7 +62,7 @@ export class UIRenderer {
    * @returns {void}
    */
   applyTheme(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.setAttribute("data-theme", theme);
   }
 
   /**
@@ -73,12 +74,21 @@ export class UIRenderer {
    *           onHistoryClick: () => void, onExportClick: () => void }} options
    * @returns {void}
    */
-  renderReport(report, { theme, onThemeToggle, onHistoryClick, onExportClick }) {
+  renderReport(
+    report,
+    { theme, onThemeToggle, onHistoryClick, onExportClick },
+  ) {
     this._clear();
 
     const children = [
       this._buildHeader(report.domain, theme, onThemeToggle),
       createScoreBadge(report.finalScore, report.riskLevel),
+      createRiskFactors(
+        report.likelihoodScore,
+        report.likelihoodCategory,
+        report.impactScore,
+        report.impactCategory,
+      ),
     ];
 
     if (report.truncated) {
@@ -89,7 +99,7 @@ export class UIRenderer {
       this._buildChipRow(report),
       this._buildFindingsSection(report),
       this._buildRecommendationsSection(report),
-      this._buildFooter(onHistoryClick, onExportClick)
+      this._buildFooter(onHistoryClick, onExportClick),
     );
 
     this.root.append(...children);
@@ -97,29 +107,30 @@ export class UIRenderer {
 
   /** @private */
   _buildTruncatedNotice() {
-    const notice = document.createElement('div');
-    notice.className = 'empty-state';
-    notice.style.margin = '0 16px 12px';
-    notice.style.color = 'var(--risk-medium)';
-    notice.style.borderColor = 'var(--risk-medium)';
-    notice.textContent = 'Halaman ini memiliki jumlah script/atribut yang sangat banyak — sebagian tidak dianalisis demi menjaga performa.';
+    const notice = document.createElement("div");
+    notice.className = "empty-state";
+    notice.style.margin = "0 16px 12px";
+    notice.style.color = "var(--risk-medium)";
+    notice.style.borderColor = "var(--risk-medium)";
+    notice.textContent =
+      "Halaman ini memiliki jumlah script/atribut yang sangat banyak — sebagian tidak dianalisis demi menjaga performa.";
     return notice;
   }
 
   /** @private */
   _buildHeader(domain, theme, onThemeToggle) {
-    const header = document.createElement('div');
-    header.className = 'app-header';
+    const header = document.createElement("div");
+    header.className = "app-header";
 
-    const domainWrap = document.createElement('div');
-    domainWrap.className = 'app-header__domain';
+    const domainWrap = document.createElement("div");
+    domainWrap.className = "app-header__domain";
 
-    const dot = document.createElement('span');
-    dot.className = 'app-header__dot';
+    const dot = document.createElement("span");
+    dot.className = "app-header__dot";
 
-    const domainText = document.createElement('span');
-    domainText.className = 'app-header__domain-text';
-    domainText.textContent = domain || 'Halaman tidak dikenal';
+    const domainText = document.createElement("span");
+    domainText.className = "app-header__domain-text";
+    domainText.textContent = domain || "Halaman tidak dikenal";
 
     domainWrap.append(dot, domainText);
 
@@ -135,25 +146,25 @@ export class UIRenderer {
 
   /** @private */
   _buildChipRow(report) {
-    const row = document.createElement('div');
-    row.className = 'chip-row';
+    const row = document.createElement("div");
+    row.className = "chip-row";
 
     const chips = [
-      { label: 'Skor CSP', value: report.cspScore },
-      { label: 'Warning', value: report.cspWarnings.length },
-      { label: 'Script Berisiko', value: report.scriptFindings.length },
+      { label: "Skor CSP", value: report.cspScore },
+      { label: "Warning", value: report.cspWarnings.length },
+      { label: "Script Berisiko", value: report.scriptFindings.length },
     ];
 
     for (const c of chips) {
-      const chip = document.createElement('div');
-      chip.className = 'chip';
+      const chip = document.createElement("div");
+      chip.className = "chip";
 
-      const value = document.createElement('div');
-      value.className = 'chip__value font-mono';
+      const value = document.createElement("div");
+      value.className = "chip__value font-mono";
       value.textContent = String(c.value);
 
-      const label = document.createElement('div');
-      label.className = 'chip__label';
+      const label = document.createElement("div");
+      label.className = "chip__label";
       label.textContent = c.label;
 
       chip.append(value, label);
@@ -163,59 +174,146 @@ export class UIRenderer {
   }
 
   /** @private */
+  /** @private */
   _buildFindingsSection(report) {
-    const section = document.createElement('div');
-    section.className = 'section';
+    const section = document.createElement("div");
+    section.className = "section";
 
-    const title = document.createElement('h2');
-    title.className = 'section__title';
-    title.textContent = 'Temuan';
+    const title = document.createElement("h2");
+    title.className = "section__title";
+    title.textContent = "Temuan";
 
-    const list = document.createElement('div');
-    list.className = 'section__list';
+    const list = document.createElement("div");
+    list.className = "section__list";
 
-    const allFindings = [
-      ...report.cspWarnings.map((w) => ({
-        title: w.keyword === '-' ? `Directive "${w.directive}" bermasalah` : `${w.keyword} pada ${w.directive}`,
-        severity: w.severity,
-        description: w.explanation,
-      })),
-      ...report.scriptFindings.map((f) => ({
-        title: f.sinkId.startsWith('event-handler:') ? `Atribut ${f.sinkId.split(':')[1]} inline` : `Sink "${f.sinkId}" terdeteksi`,
-        severity: f.severity,
-        description: `${f.description} — cuplikan: ${f.matchedText}`,
-        confidence: f.confidence,
-      })),
-    ];
+    // ============================================================
+    // CSP WARNINGS
+    // ============================================================
 
-    if (allFindings.length === 0) {
-      const empty = document.createElement('div');
-      empty.className = 'empty-state';
-      empty.textContent = 'Tidak ada temuan berisiko pada halaman ini.';
-      list.appendChild(empty);
-    } else {
-      for (const finding of allFindings) {
-        list.appendChild(createFindingCard(finding));
+    const cspFindings = report.cspWarnings.map((w) => ({
+      title:
+        w.keyword === "-"
+          ? "Header Content-Security-Policy tidak ditemukan"
+          : `${w.keyword} pada ${w.directive}`,
+      severity: w.severity,
+      description: w.explanation ?? "Tidak ada penjelasan.",
+      type: "csp",
+    }));
+
+    // ============================================================
+    // SCRIPT FINDINGS
+    // ============================================================
+
+    const scriptGroups = new Map();
+
+    for (const f of report.scriptFindings) {
+      const sinkId = f.sinkId ?? "unknown";
+      const severity = f.severity ?? "LOW";
+
+      const key = `${sinkId}::${severity}`;
+
+      if (!scriptGroups.has(key)) {
+        scriptGroups.set(key, {
+          title: sinkId.startsWith("event-handler:")
+            ? `Atribut ${sinkId.split(":")[1]} inline`
+            : `Sink "${sinkId}" terdeteksi`,
+
+          severity,
+
+          description: f.description ?? "Tidak ada penjelasan.",
+
+          confidence:
+            typeof f.confidence === "number" ? f.confidence : undefined,
+
+          matchedText: f.matchedText ?? "",
+
+          count: 0,
+
+          type: "script",
+        });
       }
+
+      scriptGroups.get(key).count += 1;
     }
 
-    section.append(title, list);
+    const scriptFindings = Array.from(scriptGroups.values());
+
+    const allFindings = [...cspFindings, ...scriptFindings];
+
+    // ============================================================
+    // TIDAK ADA TEMUAN
+    // ============================================================
+
+    if (allFindings.length === 0) {
+      const empty = document.createElement("div");
+      empty.className = "section__empty";
+      empty.textContent = "Tidak ditemukan temuan.";
+
+      list.appendChild(empty);
+      section.append(title, list);
+
+      return section;
+    }
+
+    // ============================================================
+    // BATCH RENDERING
+    // ============================================================
+
+    const BATCH_SIZE = 20;
+    let renderedCount = 0;
+
+    const loadMoreButton = document.createElement("button");
+
+    loadMoreButton.type = "button";
+    loadMoreButton.className = "findings-load-more";
+
+    const renderNextBatch = () => {
+      const nextItems = allFindings.slice(
+        renderedCount,
+        renderedCount + BATCH_SIZE,
+      );
+
+      for (const finding of nextItems) {
+        list.appendChild(createFindingCard(finding));
+      }
+
+      renderedCount += nextItems.length;
+
+      const remaining = allFindings.length - renderedCount;
+
+      if (remaining > 0) {
+        const nextCount = Math.min(BATCH_SIZE, remaining);
+
+        loadMoreButton.textContent = `Tampilkan ${nextCount} temuan berikutnya`;
+
+        loadMoreButton.style.display = "block";
+      } else {
+        loadMoreButton.style.display = "none";
+      }
+    };
+
+    loadMoreButton.addEventListener("click", renderNextBatch);
+
+    renderNextBatch();
+
+    section.append(title, list, loadMoreButton);
+
     return section;
   }
 
   /** @private */
   _buildRecommendationsSection(report) {
-    const section = document.createElement('div');
-    section.className = 'section';
+    const section = document.createElement("div");
+    section.className = "section";
 
-    const title = document.createElement('h2');
-    title.className = 'section__title';
-    title.textContent = 'Rekomendasi';
+    const title = document.createElement("h2");
+    title.className = "section__title";
+    title.textContent = "Rekomendasi";
 
     if (report.recommendations.length === 0) {
-      const empty = document.createElement('div');
-      empty.className = 'empty-state';
-      empty.textContent = 'Tidak ada rekomendasi — konfigurasi sudah baik.';
+      const empty = document.createElement("div");
+      empty.className = "empty-state";
+      empty.textContent = "Tidak ada rekomendasi — konfigurasi sudah baik.";
       section.append(title, empty);
       return section;
     }
@@ -226,15 +324,19 @@ export class UIRenderer {
     });
 
     for (const rec of sorted) {
-      const item = document.createElement('div');
-      item.className = 'recommendation-item';
+      const item = document.createElement("div");
+      item.className = "recommendation-item";
 
-      const priorityBar = document.createElement('span');
-      priorityBar.className = 'recommendation-item__priority';
+      const priorityBar = document.createElement("span");
+      priorityBar.className = "recommendation-item__priority";
       priorityBar.style.background =
-        rec.priority === 'HIGH' ? 'var(--risk-high)' : rec.priority === 'LOW' ? 'var(--risk-low)' : 'var(--risk-medium)';
+        rec.priority === "HIGH"
+          ? "var(--risk-high)"
+          : rec.priority === "LOW"
+            ? "var(--risk-low)"
+            : "var(--risk-medium)";
 
-      const text = document.createElement('span');
+      const text = document.createElement("span");
       text.textContent = rec.suggestion;
 
       item.append(priorityBar, text);
@@ -253,31 +355,31 @@ export class UIRenderer {
   renderHistory(history, onBack) {
     this._clear();
 
-    const section = document.createElement('div');
-    section.className = 'section';
-    section.style.paddingTop = '16px';
+    const section = document.createElement("div");
+    section.className = "section";
+    section.style.paddingTop = "16px";
 
-    const title = document.createElement('h2');
-    title.className = 'section__title';
-    title.textContent = 'Riwayat Analisis';
+    const title = document.createElement("h2");
+    title.className = "section__title";
+    title.textContent = "Riwayat Analisis";
 
-    const list = document.createElement('div');
-    list.className = 'section__list';
+    const list = document.createElement("div");
+    list.className = "section__list";
 
     if (history.length === 0) {
-      const empty = document.createElement('div');
-      empty.className = 'empty-state';
-      empty.textContent = 'Belum ada riwayat untuk domain ini.';
+      const empty = document.createElement("div");
+      empty.className = "empty-state";
+      empty.textContent = "Belum ada riwayat untuk domain ini.";
       list.appendChild(empty);
     } else {
       for (const entry of history) {
-        const row = document.createElement('div');
-        row.className = 'finding-card';
-        row.style.padding = '8px 10px';
+        const row = document.createElement("div");
+        row.className = "finding-card";
+        row.style.padding = "8px 10px";
 
-        const date = new Date(entry.timestamp).toLocaleString('id-ID');
-        const line1 = document.createElement('div');
-        line1.className = 'finding-card__title';
+        const date = new Date(entry.timestamp).toLocaleString("id-ID");
+        const line1 = document.createElement("div");
+        line1.className = "finding-card__title";
         line1.textContent = `${date} — Skor ${entry.finalScore} (${entry.riskLevel})`;
 
         row.appendChild(line1);
@@ -285,12 +387,12 @@ export class UIRenderer {
       }
     }
 
-    const backBtn = document.createElement('button');
-    backBtn.className = 'footer-btn';
-    backBtn.type = 'button';
-    backBtn.textContent = '← Kembali ke hasil analisis';
-    backBtn.style.margin = '12px 16px 0';
-    backBtn.addEventListener('click', onBack);
+    const backBtn = document.createElement("button");
+    backBtn.className = "footer-btn";
+    backBtn.type = "button";
+    backBtn.textContent = "← Kembali ke hasil analisis";
+    backBtn.style.margin = "12px 16px 0";
+    backBtn.addEventListener("click", onBack);
 
     section.append(title, list);
     this.root.append(section, backBtn);
@@ -298,20 +400,20 @@ export class UIRenderer {
 
   /** @private */
   _buildFooter(onHistoryClick, onExportClick) {
-    const footer = document.createElement('div');
-    footer.className = 'app-footer';
+    const footer = document.createElement("div");
+    footer.className = "app-footer";
 
-    const historyBtn = document.createElement('button');
-    historyBtn.className = 'footer-btn';
-    historyBtn.type = 'button';
-    historyBtn.textContent = 'Riwayat';
-    historyBtn.addEventListener('click', onHistoryClick);
+    const historyBtn = document.createElement("button");
+    historyBtn.className = "footer-btn";
+    historyBtn.type = "button";
+    historyBtn.textContent = "Riwayat";
+    historyBtn.addEventListener("click", onHistoryClick);
 
-    const exportBtn = document.createElement('button');
-    exportBtn.className = 'footer-btn footer-btn--primary';
-    exportBtn.type = 'button';
-    exportBtn.textContent = 'Ekspor JSON';
-    exportBtn.addEventListener('click', onExportClick);
+    const exportBtn = document.createElement("button");
+    exportBtn.className = "footer-btn footer-btn--primary";
+    exportBtn.type = "button";
+    exportBtn.textContent = "Ekspor JSON";
+    exportBtn.addEventListener("click", onExportClick);
 
     footer.append(historyBtn, exportBtn);
     return footer;

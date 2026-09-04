@@ -13,9 +13,9 @@
  * hanya baca file JSON lokal (bukan network request).
  */
 
-import { ConfigService } from '../services/ConfigService.js';
-import { CSPHeaderService } from '../services/CSPHeaderService.js';
-import { StorageService } from '../services/StorageService.js';
+import { ConfigService } from "../services/ConfigService.js";
+import { CSPHeaderService } from "../services/CSPHeaderService.js";
+import { StorageService } from "../services/StorageService.js";
 import {
   CSPAnalyzer,
   ScriptAnalyzer,
@@ -23,10 +23,35 @@ import {
   ScoreEngine,
   RiskCalculator,
   AnalyzerRegistry,
-} from '../../packages/xss-risk-core/index.js';
-import { AnalysisOrchestrator } from './AnalysisOrchestrator.js';
-import { MessageRouter } from './MessageRouter.js';
-import { MessageType } from './messageTypes.js';
+} from "../../packages/xss-risk-core/index.js";
+import { AnalysisOrchestrator } from "./AnalysisOrchestrator.js";
+import { MessageRouter } from "./MessageRouter.js";
+import { MessageType } from "./messageTypes.js";
+
+function updateToolbarBadge(tabId, report) {
+  const riskLevel = report?.riskLevel;
+
+  if (!riskLevel) {
+    chrome.action.setBadgeText({
+      tabId,
+      text: "",
+    });
+    return;
+  }
+
+  const badgeText =
+    {
+      LOW: "L",
+      MEDIUM: "M",
+      HIGH: "H",
+      CRITICAL: "C",
+    }[riskLevel] ?? "";
+
+  chrome.action.setBadgeText({
+    tabId,
+    text: badgeText,
+  });
+}
 
 const cspHeaderService = new CSPHeaderService();
 const storageService = new StorageService();
@@ -43,14 +68,18 @@ cspHeaderService.listenHeaders();
  */
 function requestDomScan(tabId) {
   return new Promise((resolve, reject) => {
-    chrome.tabs.sendMessage(tabId, { type: MessageType.SCAN_DOM }, (response) => {
-      if (chrome.runtime.lastError) {
-        // Wajar terjadi mis. pada halaman chrome:// yang tidak bisa di-inject content script
-        reject(new Error(chrome.runtime.lastError.message));
-        return;
-      }
-      resolve(response ?? { scriptEntries: [], metaCSP: null });
-    });
+    chrome.tabs.sendMessage(
+      tabId,
+      { type: MessageType.SCAN_DOM },
+      (response) => {
+        if (chrome.runtime.lastError) {
+          // Wajar terjadi mis. pada halaman chrome:// yang tidak bisa di-inject content script
+          reject(new Error(chrome.runtime.lastError.message));
+          return;
+        }
+        resolve(response ?? { scriptEntries: [], metaCSP: null });
+      },
+    );
   });
 }
 
@@ -74,8 +103,12 @@ async function buildMessageRouter() {
   // menambah satu baris register() di sini — AnalysisOrchestrator.js
   // TIDAK PERLU diubah sama sekali.
   const registry = new AnalyzerRegistry();
-  registry.register('csp', new CSPAnalyzer(cspRules, scoreEngine), 'csp');
-  registry.register('script', new ScriptAnalyzer(sinkPatterns, tracer), 'script');
+  registry.register("csp", new CSPAnalyzer(cspRules, scoreEngine), "csp");
+  registry.register(
+    "script",
+    new ScriptAnalyzer(sinkPatterns, tracer),
+    "script",
+  );
 
   const orchestrator = new AnalysisOrchestrator({
     cspHeaderService,
@@ -85,20 +118,31 @@ async function buildMessageRouter() {
     storageService,
   });
 
-  return new MessageRouter(orchestrator, storageService);
+  return new MessageRouter(orchestrator, storageService, updateToolbarBadge);
 }
 
 /** @type {Promise<MessageRouter>|null} */
 let routerPromise = null;
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (!routerPromise) routerPromise = buildMessageRouter();
+  if (!routerPromise) {
+    routerPromise = buildMessageRouter();
+  }
 
   routerPromise
-    .then((router) => router.handleMessage(message, sender, sendResponse))
+    .then((router) => {
+      return router.handleMessage(message, sender, sendResponse);
+    })
     .catch((error) => {
-      sendResponse({ type: MessageType.ANALYSIS_ERROR, payload: { message: error.message } });
+      console.error("[CXRAF] Background error:", error);
+
+      if (typeof sendResponse === "function") {
+        sendResponse({
+          type: MessageType.ANALYSIS_ERROR,
+          payload: { message: error.message },
+        });
+      }
     });
 
-  return true; // seluruh response bersifat asynchronous
+  return true;
 });

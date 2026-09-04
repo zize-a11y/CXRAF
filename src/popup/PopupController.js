@@ -8,7 +8,7 @@
  * ke UIRenderer (controller ini TIDAK PERNAH menyentuh DOM secara langsung).
  */
 
-import { MessageType } from '../background/messageTypes.js';
+import { MessageType } from "../background/messageTypes.js";
 
 export class PopupController {
   /**
@@ -20,7 +20,7 @@ export class PopupController {
     this.storageService = storageService;
     /** @type {import('../models/FinalReport.js').FinalReport|null} */
     this._lastReport = null;
-    this._domain = '';
+    this._domain = "";
   }
 
   /**
@@ -43,8 +43,10 @@ export class PopupController {
    */
   async onPopupOpen() {
     const tab = await this._getActiveTab();
-    if (!tab || !tab.url || !tab.url.startsWith('http')) {
-      this.uiRenderer.renderError('halaman ini bukan halaman web biasa (http/https).');
+    if (!tab || !tab.url || !tab.url.startsWith("http")) {
+      this.uiRenderer.renderError(
+        "halaman ini bukan halaman web biasa (http/https).",
+      );
       return;
     }
 
@@ -79,8 +81,18 @@ export class PopupController {
             reject(new Error(response.payload.message));
             return;
           }
+          console.log("[CXRAF] FULL REPORT:", response.payload);
+          console.log(
+            "[CXRAF] SCRIPT FINDINGS:",
+            response.payload?.scriptFindings,
+          );
+          console.log(
+            "[CXRAF] SCRIPT FINDINGS COUNT:",
+            response.payload?.scriptFindings?.length,
+          );
+
           resolve(response.payload);
-        }
+        },
       );
     });
   }
@@ -88,7 +100,7 @@ export class PopupController {
   /** @private @returns {void} */
   _renderCurrentReport() {
     this.uiRenderer.renderReport(this._lastReport, {
-      theme: document.documentElement.getAttribute('data-theme') || 'dark',
+      theme: document.documentElement.getAttribute("data-theme") || "dark",
       onThemeToggle: (nextTheme) => this._handleThemeToggle(nextTheme),
       onHistoryClick: () => this._handleHistoryClick(),
       onExportClick: () => this._handleExportClick(),
@@ -98,7 +110,10 @@ export class PopupController {
   /** @private @param {string} nextTheme @returns {Promise<void>} */
   async _handleThemeToggle(nextTheme) {
     const preferences = await this.storageService.getPreferences();
-    await this.storageService.savePreferences({ ...preferences, theme: nextTheme });
+    await this.storageService.savePreferences({
+      ...preferences,
+      theme: nextTheme,
+    });
   }
 
   /** @private @returns {Promise<void>} */
@@ -116,7 +131,7 @@ export class PopupController {
     return new Promise((resolve) => {
       chrome.runtime.sendMessage(
         { type: MessageType.REQUEST_HISTORY, domain },
-        (response) => resolve(response?.payload ?? [])
+        (response) => resolve(response?.payload ?? []),
       );
     });
   }
@@ -131,11 +146,11 @@ export class PopupController {
     if (!this._lastReport) return;
 
     const blob = new Blob([JSON.stringify(this._lastReport, null, 2)], {
-      type: 'application/json',
+      type: "application/json",
     });
     const url = URL.createObjectURL(blob);
 
-    const anchor = document.createElement('a');
+    const anchor = document.createElement("a");
     anchor.href = url;
     anchor.download = `csp-xss-report-${this._domain}-${Date.now()}.json`;
     anchor.click();
@@ -150,7 +165,9 @@ export class PopupController {
    */
   _getActiveTab() {
     return new Promise((resolve) => {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => resolve(tabs[0]));
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) =>
+        resolve(tabs[0]),
+      );
     });
   }
 }

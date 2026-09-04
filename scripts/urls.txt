@@ -87,7 +87,6 @@ https://smkn2sumbawabesar.sch.id
 
 # --- Target Spesifik: Desa di Kab. Sumbawa (.desa.id) ---
 https://jorok-utan.desa.id
-https://desa-semamung.sumbawakab.go.id/
 
 # --- Target Spesifik: Media, Komersial & Komunitas Sumbawa (.com, .id, .co.id) ---
 https://kesultanansumbawa.id
